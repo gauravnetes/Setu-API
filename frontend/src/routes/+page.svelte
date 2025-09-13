@@ -7,6 +7,9 @@
   let results: SearchResult[] = [];
   let error: string | null = null;
   let hasSearched = false;
+  let debounceTimeout: ReturnType<typeof setTimeout>;
+
+
 
   async function handleSearch() {
     if (!searchTerm.trim()) return;
@@ -28,6 +31,14 @@
       isSearching = false;
     }
   }
+
+   $: if (searchTerm) {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      handleSearch();
+    }, 100);
+  }
+
 
   function handleKeyPress(event: KeyboardEvent) {
     if (event.key === 'Enter') {
