@@ -1,6 +1,6 @@
 export interface SearchResult {
   NAMASTE_Code: string;
-  traditional_term: string;
+  Traditional_Term: string;
   System: string;
   Modern_Name: string;
   Description: string;
