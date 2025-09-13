@@ -8,6 +8,7 @@ def load_data_from_csv(path: str) -> dict:
         df = pd.read_csv(path)
         for row in df.itertuples(index=False): 
             db[row.Traditional_Term] = {
+                "traditional_term": row.Traditional_Term, 
                 "namaste_code": row.NAMASTE_Code, 
                 "system": row.System, 
                 "modern_name": row.Modern_Name,
