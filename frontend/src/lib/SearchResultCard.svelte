@@ -7,7 +7,7 @@
   <div class="flex flex-col md:flex-row md:items-start gap-6">
     <div class="flex-grow">
       <span class="rounded-full bg-sky-100 text-sky-800 px-3 py-1 text-xs font-semibold">{result.System}</span>
-      <h2 class="mt-2 text-2xl font-bold text-gray-800">{result.traditional_term}</h2>
+      <h2 class="mt-2 text-2xl font-bold text-gray-800">{result.Traditional_Term}</h2>
       <p class="mt-1 text-gray-600 font-mono">{result.NAMASTE_Code}</p>
       <p class="mt-2 text-sky-400 font-bold">{result.Modern_Name}</p>
       <p class="mt-2 text-gray-700">{result.Description}</p>
