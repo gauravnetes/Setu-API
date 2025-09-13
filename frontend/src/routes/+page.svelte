@@ -96,7 +96,7 @@
     <div class="mb-8">
       <p class="mb-3 text-sm text-gray-500">Quick search:</p>
       <div class="flex flex-wrap gap-2">
-        {#each ['Panchakosha', 'Tridosha', 'Marma', 'Rasayana', 'Pranayama', 'Chakra'] as suggestion}
+        {#each ['Ardhavabhedaka', 'Suryavarta', 'Kasa', 'Pratishyaya', 'Abhishyanda', 'Tamaka Shwasa'] as suggestion}
           <!-- FIX 2: These buttons now correctly call the quickSearch function -->
           <button
             class="rounded-full border border-blue-200 bg-blue-100 px-4 py-2 text-sm text-sky-700 transition-colors hover:bg-blue-200"
