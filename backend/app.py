@@ -33,7 +33,7 @@ async def search_terms(term: str = ""):
     for traditional_term, data in AYUSH_DB.items(): 
         if search_query in traditional_term.lower(): 
             match_data = {
-                "traditional_term": traditional_term, 
+                "Traditional_Term": traditional_term, 
                 "NAMASTE_Code": data['namaste_code'],
                 "System": data['system'],
                 "Modern_Name": data['modern_name'],
