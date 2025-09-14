@@ -114,7 +114,7 @@
           id="search-input"
           type="text"
           bind:value={searchTerm}
-          on:keypress={handleKeyPress}
+          onkeypress={handleKeyPress}
           placeholder="🔍 Search for an AYUSH term (e.g., Amlapitta)..."
           class="rounded-4xl w-full border-none bg-blue-50 px-5 py-4 text-base shadow-sm transition-all duration-300 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-300"
         />
@@ -129,7 +129,7 @@
 
       <button
         id="search-button"
-        on:click={handleSearch}
+        onclick={handleSearch}
         disabled={isSearching}
         class="rounded-4xl bg-sky-400 px-8 py-4 font-semibold text-white shadow-md transition-all duration-300 hover:bg-sky-500 hover:shadow-lg disabled:opacity-50"
       >
@@ -145,7 +145,7 @@
           <!-- FIX 2: These buttons now correctly call the quickSearch function -->
           <button
             class="rounded-full border border-blue-200 bg-blue-100 px-4 py-2 text-sm text-sky-700 transition-colors hover:bg-blue-200"
-            on:click={() => quickSearch(suggestion)}
+            onclick={() => quickSearch(suggestion)}
           >
             {suggestion}
           </button>

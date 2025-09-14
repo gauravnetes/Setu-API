@@ -1,4 +1,6 @@
 <script lang="ts">
+	import jsPDF from 'jspdf';
+	import type { Diagnosis } from '$lib/types';
 	import { selectedDiagnosis } from '$lib/store';
 	import SearchResultCard from '$lib/SearchResultCard.svelte';
 	import { onMount, onDestroy } from 'svelte';
@@ -25,17 +27,62 @@
 			showModal = false;
 		}
 	}
+
+	function downloadReport(diagnosis: Diagnosis) {
+		if (!diagnosis) return;
+		const doc = new jsPDF();
+
+		// Title
+		doc.setFontSize(16);
+		doc.text('Patient Electronic Medical Record', 10, 20);
+
+		// Patient details
+		doc.setFontSize(12);
+		doc.text('Patient: Anjali Sharma, 34F', 10, 40);
+		doc.text('Record #: 789-456-123', 10, 50);
+
+		// Encounter note
+		doc.text('Encounter Note - 14 Sep 2025', 10, 70);
+
+		doc.text(
+			'S (Subjective): Patient reports radiating pain down the right leg, worse when sitting. Denies injury.',
+			10,
+			90
+		);
+		doc.text(
+			'O (Objective): Positive Straight Leg Raise test on right. Vitals stable. Ayurvedic exam suggests Vata aggravation.',
+			10,
+			100
+		);
+
+		// ✅ Safe access with nullish coalescing
+		doc.text(`A (Assessment):`, 10, 115);
+		doc.text(`Diagnosis Added: ${diagnosis.Traditional_Term ?? 'N/A'}`, 10, 125);
+
+		const setuLink: string = diagnosis.SETU_Link ?? 'https://setu.example.com';
+		doc.textWithLink('View SETU Link', 10, 135, { url: setuLink });
+
+		doc.text(
+			'P (Plan): 1. Prescribe Ayurvedic formulations. 2. Advise Yogasanas. 3. Follow-up in 2 weeks.',
+			10,
+			150
+		);
+
+		// Save file
+		doc.save('emr_report.pdf');
+	}
 </script>
 
 <main class="min-h-screen bg-gray-100 p-4 font-sans md:p-8">
 	<div class="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-2xl md:p-8">
 		<button
 			type="button"
-			class="mb-2 cursor-pointer text-lg font-bold text-sky-400 "
+			class="mb-2 cursor-pointer text-lg font-bold text-sky-400"
 			on:click={() => history.back()}
 		>
 			← Back
 		</button>
+
 		<div class="mb-6 border-b border-gray-200 pb-4">
 			<h1 class="text-3xl font-bold text-gray-800">Patient Electronic Medical Record</h1>
 			<div class="mt-2 flex justify-between text-sm text-gray-600">
@@ -45,6 +92,15 @@
 		</div>
 
 		<div>
+			{#if diagnosis}
+				<button
+					type="button"
+					class="cursor-pointer rounded-full bg-sky-100 px-5 py-3 text-xs font-semibold text-sky-800 transition-colors duration-500 hover:bg-sky-300 hover:text-zinc-800"
+					on:click={downloadReport}
+				>
+					Download EMR Report (PDF)
+				</button>
+			{/if}
 			<h2 class="mb-4 text-xl font-semibold text-gray-700">Encounter Note - 14 Sep 2025</h2>
 
 			<div class="space-y-6">
@@ -66,8 +122,8 @@
 				<div>
 					<h3 class="font-bold text-gray-800">A (Assessment)</h3>
 					{#if diagnosis}
-						<div class="mt-2 rounded-r-lg border-l-4 border-sky-500 bg-sky-50 p-4">
-							<h3 class="text-lg font-bold text-sky-800">
+						<div class="mt-2 rounded-r-lg border-l-4 border-green-400 bg-green-50 p-4">
+							<h3 class="text-lg font-bold text-green-600">
 								Diagnosis Added: {diagnosis.Traditional_Term}
 							</h3>
 							<p class="mt-2 text-gray-700">
