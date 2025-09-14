@@ -2,11 +2,12 @@
   import type { SearchResult } from '$lib/types';
   import SearchResultCard from '$lib/SearchResultCard.svelte';
 
-  let searchTerm = '';
-  let isSearching = false;
-  let results: SearchResult[] = [];
-  let error: string | null = null;
-  let hasSearched = false;
+  let searchTerm = $state('');
+  let isSearching = $state(false);
+  let results = $state<SearchResult[]>([]);
+  let error = $state<string | null>(null);
+  let hasSearched = $state(false);
+
   let debounceTimeout: ReturnType<typeof setTimeout>;
 
 
@@ -72,13 +73,6 @@
     } finally {
       isSearching = false;
     }
-  }
-
-   $: if (searchTerm) {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
-      handleSearch();
-    }, 100);
   }
 
 

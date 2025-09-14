@@ -85,6 +85,8 @@ async def search_terms(term: str = ""):
     return value_set
 
 
+
+
 @app.get("/")
 async def root(): 
     return {"message": "SETU (Bridge) API is running"}
