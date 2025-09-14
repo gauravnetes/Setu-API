@@ -10,6 +10,39 @@
   let debounceTimeout: ReturnType<typeof setTimeout>;
 
 
+  function mapFhirToSearchResult(fhirContains: any): SearchResult {
+  const cleanResult: Partial<SearchResult> = {};
+
+  // 1. Get the easy, top-level properties
+  cleanResult.NAMASTE_Code = fhirContains.code;
+  cleanResult.Traditional_Term = fhirContains.display;
+
+  // 2. Loop through the 'designation' array to find the mapped data
+  if (fhirContains.designation) {
+    for (const des of fhirContains.designation) {
+      // Use the 'use.code' to identify what each value means
+      switch (des.use?.code) {
+        case 'modern-name':
+          cleanResult.Modern_Name = des.value;
+          break;
+        case 'icd11-biomed-code':
+          cleanResult.ICD11_Biomedicine_Code = des.value;
+          break;
+        case 'icd11-tm2-code':
+          cleanResult.ICD11_TM2_Code = des.value;
+          break;
+        case 'system':
+          cleanResult.System = des.value;
+          break;
+        case 'description':
+          cleanResult.Description = des.value;
+          break;
+      }
+    }
+  }
+
+  return cleanResult as SearchResult;
+}
 
   async function handleSearch() {
     if (!searchTerm.trim()) return;
@@ -19,11 +52,20 @@
     hasSearched = true;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/search?term=${searchTerm}`);
+      const response = await fetch(`http://127.0.0.1:8000/api/search?term=${searchTerm}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      results = await response.json();
+      
+      // 1. Get the raw, complex FHIR response
+      const rawFhirResponse = await response.json();
+
+      // 2. Safely access the array of results inside the FHIR object
+      const fhirResults = rawFhirResponse.expansion?.contains || [];
+
+      // 3. Use our new mapping function to convert each complex result into a simple one
+      results = fhirResults.map(mapFhirToSearchResult);
+
     } catch (e) {
       error = 'Failed to connect to the backend. Is the server running?';
       results = [];
@@ -54,17 +96,15 @@
 </script>
 
 <main
-  class="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-blue-50 to-white p-6"
+  class="relative flex min-h-screen flex-col items-center bg-gradient-to-b from-sky-100 to-white p-6"
 >
   <!-- Header -->
   <div class="mb-8 w-full max-w-4xl text-center">
     <div class="mb-4 flex items-center justify-center gap-3">
-      <h1 id="logo" class="glow text-5xl font-extrabold tracking-tight text-sky-500">
-        ⚕️ SETU API
-      </h1>
+      <img src="/logo.png" alt="My Company Logo" class="h-32" />
     </div>
     <p id="description" class="mb-4 text-lg text-gray-600">
-      Bridge India's Traditional Medicine to Global Standards
+      Translating Ancient Healing for a Modern World
     </p>
     <div class="flex items-center justify-center gap-4 text-sm text-gray-500">
       <span class="rounded-full bg-blue-100 px-3 py-1">Ministry of AYUSH</span>
@@ -97,7 +137,7 @@
         id="search-button"
         on:click={handleSearch}
         disabled={isSearching}
-        class="rounded-4xl bg-sky-500 px-8 py-4 font-semibold text-white shadow-md transition-all duration-300 hover:bg-sky-600 hover:shadow-lg disabled:opacity-50"
+        class="rounded-4xl bg-sky-400 px-8 py-4 font-semibold text-white shadow-md transition-all duration-300 hover:bg-sky-500 hover:shadow-lg disabled:opacity-50"
       >
         {isSearching ? 'SEARCHING...' : 'SEARCH'}
       </button>
@@ -117,11 +157,6 @@
           </button>
         {/each}
       </div>
-    </div>
-    
-    <!-- Feature Cards (No changes needed here) -->
-    <div class="grid gap-6 md:grid-cols-3">
-       <!-- ... your feature cards ... -->
     </div>
   </div>
   
