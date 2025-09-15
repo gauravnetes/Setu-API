@@ -9,6 +9,18 @@ from fhir.resources.valueset import ValueSetComposeIncludeConceptDesignation
 from fhir.resources.coding import Coding
 
 
+# For Presentatoin
+def remove_none_values(d: Any) -> Any:
+    """
+    Recursively remove all keys from a dictionary where the value is None.
+    """
+    if isinstance(d, dict):
+        return {k: remove_none_values(v) for k, v in d.items() if v is not None}
+    if isinstance(d, list):
+        return [remove_none_values(v) for v in d]
+    return d
+
+
 app = FastAPI (
     title="SETU (Bridge) API",
     description="A FHIR-compliant terminology service for AYUSH", 
@@ -35,7 +47,8 @@ async def search_terms(term: str = ""):
     # ValueSet resource: 
     value_set = ValueSet(
         status="active", 
-        url="http://sih.gov.in/fhir/ValueSet/namaste-icd-lookup"
+        url="http://sih.gov.in/fhir/ValueSet/namaste-icd-lookup", 
+        name="NamasteIcdLookupValueSet"
     )
     
     
@@ -85,6 +98,17 @@ async def search_terms(term: str = ""):
     return value_set
 
 
+# For presentation 
+@app.get("/clean-search", response_model=Dict[str, Any])
+async def clean_search_terms(term: str = ""): 
+    
+    value_set_object = await search_terms(term)
+    
+    verbose_dict = value_set_object.model_dump()
+    
+    clean_dict = remove_none_values(verbose_dict)
+    
+    return clean_dict
 
 
 @app.get("/")
